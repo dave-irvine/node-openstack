@@ -12,6 +12,16 @@ class module.exports.OpenStack extends ApiBase
         debug "init()"
         super
         @auth_token = null
+        # Identity
+        @credentials        = require('./Models/Identity/Credentials')   @client
+        @domains            = require('./Models/Identity/Domains')       @client
+        @endpoints          = require('./Models/Identity/Endpoints')     @client
+        @groups             = require('./Models/Identity/Groups')        @client
+        @policies           = require('./Models/Identity/Policies')      @client
+        @projects           = require('./Models/Identity/Projects')      @client
+        @roles              = require('./Models/Identity/Roles')         @client
+        @services           = require('./Models/Identity/Services')      @client
+        @users              = require('./Models/Identity/Users')         @client
 
     handleOptions: =>
         debug "handleOptions()"
