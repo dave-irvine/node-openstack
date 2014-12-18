@@ -12,6 +12,8 @@ class module.exports.OpenStack extends ApiBase
         debug "init()"
         super
         @auth_token = null
+        # Compute
+        @servers            = require('./Models/Compute/Servers')        @client
         # Identity
         @credentials        = require('./Models/Identity/Credentials')   @client
         @domains            = require('./Models/Identity/Domains')       @client
