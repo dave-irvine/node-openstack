@@ -1,0 +1,31 @@
+{
+  "name": "node-openstack",
+  "version": "0.0.1",
+  "description": "Node.js bindings for OpenStack API",
+  "repository": "https://github.com/dave-irvine/node-openstack",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha -R spec"
+  },
+  "keywords": [
+    "openstack"
+  ],
+  "author": "Dave Irvine <dave@daveirvine.me>",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "~1.9.1",
+    "chai-as-promised": "~4.1.1",
+    "mocha": "~1.20.1",
+    "sinon": "~1.10.2",
+    "sinon-chai": "~2.5.0",
+    "mocha-bdd-when": "~0.1.0",
+    "proxyquire": "~1.0.1"
+  },
+  "dependencies": {
+    "url-join": "0.0.1",
+    "underscore": "~1.6.0",
+    "debug": "~1.0.2",
+    "moment": "~2.7.0",
+    "request": "~2.36.0"
+  }
+}
