@@ -13,6 +13,7 @@ class module.exports.OpenStack extends ApiBase
         super
         @auth_token = null
         # Compute
+        @hypervisors        = require('./Models/Compute/Hypervisors')    @client
         @servers            = require('./Models/Compute/Servers')        @client
         # Identity
         @credentials        = require('./Models/Identity/Credentials')   @client
