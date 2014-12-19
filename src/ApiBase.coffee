@@ -53,6 +53,8 @@ class module.exports.ApiBase
         switch method
             when "POST" then finalopts.body = JSON.stringify(opts)
             when "GET" then finalopts.uri = urljoin(path, "?#{querystring.stringify(opts)}")
+
+        finalopts.uri = finalopts.uri.replace(/\?$/,'')
         return finalopts
 
     get: (path, query={}, fn=null) =>
