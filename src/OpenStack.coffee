@@ -99,6 +99,7 @@ class module.exports.OpenStack extends ApiBase
                 @options.request_headers = _.extend { "X-Auth-Token": @auth_token.id }, @options.default_headers
                 path = @fixPath path
                 path = @replaceTokens path, query
+                delete query.context
                 super path, query, fn
             ).bind(@)
 
