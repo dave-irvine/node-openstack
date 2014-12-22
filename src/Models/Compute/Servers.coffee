@@ -1,4 +1,6 @@
 BaseModel = require '../../BaseModel'
+_ = require 'underscore'
+minimatch = require 'minimatch'
 
 class Servers extends BaseModel
     init: =>
@@ -24,6 +26,45 @@ class Servers extends BaseModel
             detail = ""
 
         @get "%context%/servers#{detail}", query, (data) => fn data if fn
+
+    find: (params={}, fn=null) =>
+        @debug "find()"
+        if typeof params is 'function'
+            fn = params
+            params = {}
+
+        if params.ip
+            params.detail = true
+            check = "ip"
+        else if params.server_name
+            check = "name"
+        else
+            throw "Matching query is mandatory"
+
+        @all(params, ((body) ->
+                matches = [];
+
+                _.each(body.servers, ((server) ->
+                        @debug server
+                        switch check
+                            when "name"
+                                if minimatch(server.name, params.server_name)
+                                    matches.push server
+                            when "ip"
+                                _.each(server.addresses, ((nic) ->
+                                        _.each(nic, ((address) ->
+                                                if minimatch(address.addr, params.ip)
+                                                    matches.push server
+                                            ).bind(@)
+                                        )
+                                    ).bind(@)
+                                )
+                    ).bind(@)
+                )
+
+                fn matches if fn
+            ).bind(@)
+        )
 
     show: (params={}, fn=null) =>
         @debug "show()"
