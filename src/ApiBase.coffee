@@ -40,6 +40,30 @@ class module.exports.ApiBase
         debug "init()"
         @client = @
 
+        @base_post = (path, data={}, fn=null) =>
+            debug "base_post() : #{path}"
+            opts = @prepareOpts path, data, "POST"
+            debug opts
+            request opts, (err, response, body) =>
+                debug "post request return"
+                unless err
+                    fn JSON.parse(body), response.headers if fn
+                else throw "error from API: " + err
+
+        @base_get = (path, query={}, fn=null) =>
+            debug "base_get() : #{path} #{querystring.stringify(query)}"
+            if typeof query is 'function'
+                fn = query
+                query = {}
+
+            opts = @prepareOpts path, query, "GET"
+            debug opts
+            request opts, (err, response, body) =>
+                debug "get request return"
+                unless err
+                    fn JSON.parse(body), response.headers if fn
+                else throw "error from API: " + err
+
     fixPath: (path) =>
         debug "fixPath()"
         path.replace(/\/$/, '') + '/'
@@ -58,25 +82,7 @@ class module.exports.ApiBase
         return finalopts
 
     get: (path, query={}, fn=null) =>
-        debug "get() : #{path} #{querystring.stringify(query)}"
-        if typeof query is 'function'
-            fn = query
-            query = {}
-
-        opts = @prepareOpts path, query, "GET"
-        debug opts
-        request opts, (err, response, body) =>
-            debug "get request return"
-            unless err
-                fn JSON.parse(body), response.headers if fn
-            else throw "error from API: " + err
+        @base_get path, query, fn
 
     post: (path, data={}, fn=null) =>
-        debug "post() : #{path}"
-        opts = @prepareOpts path, data, "POST"
-        debug opts
-        request opts, (err, response, body) =>
-            debug "post request return"
-            unless err
-                fn JSON.parse(body), response.headers if fn
-            else throw "error from API: " + err
+        @base_post path, data, fn

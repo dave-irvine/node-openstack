@@ -43,7 +43,7 @@ class module.exports.OpenStack extends ApiBase
                                 id: @options.domain ? "default"
                             password: @options.password
 
-        @post urljoin(@options.endpoints.identity, "/auth/tokens"), authOpts, ((body, headers) ->
+        @base_post urljoin(@options.endpoints.identity, "/auth/tokens"), authOpts, ((body, headers) ->
             debug "auth complete"
             @auth_token =
                 id: headers['x-subject-token']
@@ -109,4 +109,22 @@ class module.exports.OpenStack extends ApiBase
                 @switchContext query.context, _get
             else
                 do _get
+        ).bind(@)
+
+    post: (path, query={}, fn=null) =>
+        debug "post()"
+        @checkAuth (->
+            _post = (->
+                @options.request_headers = _.extend { "X-Auth-Token": @auth_token.id }, @options.default_headers
+                path = @fixPath path
+                path = @replaceTokens path, query
+                delete query.context
+                super path, query, fn
+            ).bind(@)
+
+            if query.context && query.context != "%context%" && query.context != @auth_token.context
+                debug "switch context to #{query.context}"
+                @switchContext query.context, _post
+            else
+                do _post
         ).bind(@)
