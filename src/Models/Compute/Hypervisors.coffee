@@ -36,18 +36,18 @@ class Hypervisors extends BaseModel
         unless params.hypervisor_hostname
             throw "`hypervisor_hostname` is mandatory"
 
-        _self = @
+        @all(params, ((body) ->
+                matches = [];
 
-        @all(params, (body) ->
-            matches = [];
+                _.each(body.hypervisors, ((hypervisor) ->
+                        @debug hypervisor
+                        if minimatch(hypervisor.hypervisor_hostname, params.hypervisor_hostname)
+                            matches.push hypervisor
+                    ).bind(@)
+                )
 
-            _.each(body.hypervisors, (hypervisor) ->
-                _self.debug hypervisor
-                if minimatch(hypervisor.hypervisor_hostname, params.hypervisor_hostname)
-                    matches.push hypervisor
-            )
-
-            fn matches if fn
+                fn matches if fn
+            ).bind(@)
         )
 
     show: (params={}, fn=null) =>
