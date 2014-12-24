@@ -36,19 +36,16 @@ class Hypervisors extends BaseModel
         unless params.hypervisor_hostname
             throw "`hypervisor_hostname` is mandatory"
 
-        @all(params, ((body) ->
-                matches = [];
+        @all params, (body) =>
+            matches = [];
 
-                _.each(body.hypervisors, ((hypervisor) ->
-                        @debug hypervisor
-                        if minimatch(hypervisor.hypervisor_hostname, params.hypervisor_hostname)
-                            matches.push hypervisor
-                    ).bind(@)
-                )
+            _.each body.hypervisors, (hypervisor) =>
+                @debug hypervisor
+                if minimatch(hypervisor.hypervisor_hostname, params.hypervisor_hostname)
+                    hyp = Hypervisor(hypervisor)
+                    matches.push hyp
 
-                fn matches if fn
-            ).bind(@)
-        )
+            fn matches if fn
 
     show: (params={}, fn=null) =>
         @debug "show()"
@@ -61,14 +58,13 @@ class Hypervisors extends BaseModel
 
         _self = @
 
-        @find(params, (matches) ->
+        @find params, (matches) ->
             if matches.length < 1
                 throw "No results for #{params.hypervisor_hostname}"
             else if matches.length > 1
                 throw "#{params.hypervisor_hostname} returned multiple results"
             else
                 fn matches[0] if fn
-        )
 
     servers: (params={}, fn=null) =>
         @debug "servers()"
@@ -88,14 +84,12 @@ class Hypervisors extends BaseModel
             query.all_tenants = 1
             query.context = "%context%"
 
-        @find(params, ((matches) ->
+        @find params, (matches) =>
             if matches.length < 1
                 throw "No results for #{params.hypervisor_hostname}"
             else if matches.length > 1
                 throw "#{params.hypervisor_hostname} returned multiple results"
             else
                 @get "%context%/os-hypervisors/#{matches[0].hypervisor_hostname}/servers", query, (data) => fn data.hypervisors[0].servers if fn
-            ).bind(@)
-        )
 
 module.exports = (client) -> new Hypervisors client

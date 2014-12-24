@@ -43,7 +43,7 @@ class module.exports.OpenStack extends ApiBase
                                 id: @options.domain ? "default"
                             password: @options.password
 
-        @base_post urljoin(@options.endpoints.identity, "/auth/tokens"), authOpts, ((body, headers) ->
+        @base_post urljoin(@options.endpoints.identity, "/auth/tokens"), authOpts, (body, headers) =>
             debug "auth complete"
             @auth_token =
                 id: headers['x-subject-token']
@@ -52,7 +52,6 @@ class module.exports.OpenStack extends ApiBase
 
             debug @auth_token
             do fn if fn
-        ).bind(@)
 
     switchContext: (context, fn) =>
         debug "switchContext()"
@@ -66,7 +65,7 @@ class module.exports.OpenStack extends ApiBase
                     project:
                         id: context
 
-        @post urljoin(@options.endpoints.identity, "/auth/tokens"), authOpts, ((body, headers) ->
+        @post urljoin(@options.endpoints.identity, "/auth/tokens"), authOpts, (body, headers) =>
             debug "context switch complete"
             @auth_token =
                 id: headers['x-subject-token']
@@ -75,7 +74,6 @@ class module.exports.OpenStack extends ApiBase
 
             debug @auth_token
             do fn if fn
-        ).bind(@)
 
     checkAuth: (fn) =>
         debug "checkAuth()"
@@ -95,36 +93,32 @@ class module.exports.OpenStack extends ApiBase
 
     get: (path, query={}, fn=null) =>
         debug "get()"
-        @checkAuth (->
-            _get = (->
+        @checkAuth =>
+            _get = =>
                 @options.request_headers = _.extend { "X-Auth-Token": @auth_token.id }, @options.default_headers
                 path = @fixPath path
                 path = @replaceTokens path, query
                 delete query.context
                 super path, query, fn
-            ).bind(@)
 
             if query.context && query.context != "%context%" && query.context != @auth_token.context
                 debug "switch context to #{query.context}"
                 @switchContext query.context, _get
             else
                 do _get
-        ).bind(@)
 
     post: (path, query={}, fn=null) =>
         debug "post()"
-        @checkAuth (->
-            _post = (->
+        @checkAuth =>
+            _post = =>
                 @options.request_headers = _.extend { "X-Auth-Token": @auth_token.id }, @options.default_headers
                 path = @fixPath path
                 path = @replaceTokens path, query
                 delete query.context
                 super path, query, fn
-            ).bind(@)
 
             if query.context && query.context != "%context%" && query.context != @auth_token.context
                 debug "switch context to #{query.context}"
                 @switchContext query.context, _post
             else
                 do _post
-        ).bind(@)

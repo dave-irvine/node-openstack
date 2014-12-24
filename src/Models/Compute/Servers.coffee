@@ -41,30 +41,22 @@ class Servers extends BaseModel
         else
             throw "Matching query is mandatory"
 
-        @all(params, ((body) ->
-                matches = [];
+        @all params, (body) =>
+            matches = [];
 
-                _.each(body.servers, ((server) ->
-                        @debug server
-                        switch check
-                            when "name"
-                                if minimatch(server.name, params.server_name)
+            _.each body.servers, (server) =>
+                @debug server
+                switch check
+                    when "name"
+                        if minimatch(server.name, params.server_name)
+                            matches.push server
+                    when "ip"
+                        _.each server.addresses, (nic) =>
+                            _.each nic, (address) =>
+                                if minimatch(address.addr, params.ip)
                                     matches.push server
-                            when "ip"
-                                _.each(server.addresses, ((nic) ->
-                                        _.each(nic, ((address) ->
-                                                if minimatch(address.addr, params.ip)
-                                                    matches.push server
-                                            ).bind(@)
-                                        )
-                                    ).bind(@)
-                                )
-                    ).bind(@)
-                )
 
-                fn matches if fn
-            ).bind(@)
-        )
+            fn matches if fn
 
     show: (params={}, fn=null) =>
         @debug "show()"
