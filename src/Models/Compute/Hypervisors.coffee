@@ -3,6 +3,12 @@ _ = require 'underscore'
 minimatch = require 'minimatch'
 
 class Hypervisors extends BaseModel
+    Hypervisor = null
+
+    constructor: (@client) ->
+        super client
+        Hypervisor = require('./Hypervisor') @client
+
     init: =>
         @type = "compute"
 
@@ -25,7 +31,12 @@ class Hypervisors extends BaseModel
         else
             detail = ""
 
-        @get "%context%/os-hypervisors#{detail}", query, (data) => fn data if fn
+        @get "%context%/os-hypervisors#{detail}", query, (data) =>
+            hypervisors = []
+            _.each data.hypervisors, (hypervisor) =>
+                hypervisors.push Hypervisor(hypervisor)
+
+            fn hypervisors if fn
 
     find: (params={}, fn=null) =>
         @debug "find()"
@@ -55,8 +66,6 @@ class Hypervisors extends BaseModel
 
         unless params.hypervisor_hostname
             throw "`hypervisor_hostname` is mandatory"
-
-        _self = @
 
         @find params, (matches) ->
             if matches.length < 1
