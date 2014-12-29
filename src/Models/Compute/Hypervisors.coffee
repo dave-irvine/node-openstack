@@ -10,6 +10,7 @@ class Hypervisors extends BaseModel
         Hypervisor = require('./Hypervisor') @client
 
     init: =>
+        @debug "init()"
         @type = "compute"
 
     all: (params={}, fn=null) =>

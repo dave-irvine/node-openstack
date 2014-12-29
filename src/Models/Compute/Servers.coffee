@@ -10,6 +10,7 @@ class Servers extends BaseModel
         Server = require('./Server') @client
 
     init: =>
+        @debug "init()"
         @type = "compute"
 
     all: (params={}, fn=null) =>
