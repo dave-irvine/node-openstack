@@ -25,6 +25,7 @@ class Service extends BaseModel
             host: @host
 
         @put "#{@tenant_id}/os-services/enable", params, (data) =>
+            @status = 'enabled'
             fn data if fn
 
     disable: (fn=null) =>
@@ -35,6 +36,7 @@ class Service extends BaseModel
             host: @host
 
         @put "#{@tenant_id}/os-services/disable", params, (data) =>
+            @status = 'disabled'
             fn data if fn
 
     disabled: =>
