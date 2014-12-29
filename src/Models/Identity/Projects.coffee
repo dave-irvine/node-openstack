@@ -1,6 +1,13 @@
 BaseModel = require '../../BaseModel'
+_ = require 'underscore'
 
 class Projects extends BaseModel
+    Project = null
+
+    constructor: (@client) ->
+        super client
+        Project = require('./Project') @client
+
     init: =>
         @type = "identity"
 
@@ -10,7 +17,13 @@ class Projects extends BaseModel
             fn = params
             params = {}
 
-        @get "projects", (data) => fn data if fn
+        @get "projects", (data) =>
+            projects = []
+            _.each data.projects ? [], (project) =>
+                _project = Project(project)
+                projects.push _project
+
+            fn projects if fn
 
     show: (params={}, fn=null) =>
         @debug "show()"
@@ -18,6 +31,13 @@ class Projects extends BaseModel
             fn = params
             params = {}
 
-        @get "projects/#{params.project_id}", (data) => fn data if fn
+        unless params.project_id
+            throw "`project_id` is mandatory"
+
+        @get "projects/#{params.project_id}", (data) =>
+            if data.project
+                fn Project(data.project) if fn
+            else
+                fn {} if fn
 
 module.exports = (client) -> new Projects client
