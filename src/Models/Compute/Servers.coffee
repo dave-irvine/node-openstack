@@ -32,7 +32,13 @@ class Servers extends BaseModel
         else
             detail = ""
 
-        @get "%context%/servers#{detail}", query, (data) => fn data if fn
+        @get "%context%/servers#{detail}", query, (data) =>
+            servers = []
+            _.each data.servers ? [], (server) =>
+                _server = Server(server)
+                servers.push _server
+
+            fn servers if fn
 
     find: (params={}, fn=null) =>
         @debug "find()"
@@ -48,10 +54,10 @@ class Servers extends BaseModel
         else
             throw "Matching query is mandatory"
 
-        @all params, (body) =>
+        @all params, (servers) =>
             matches = [];
 
-            _.each body.servers, (server) =>
+            _.each servers, (server) =>
                 @debug server
                 switch check
                     when "name"
