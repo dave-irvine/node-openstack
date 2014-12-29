@@ -75,30 +75,4 @@ class Hypervisors extends BaseModel
             else
                 fn matches[0] if fn
 
-    servers: (params={}, fn=null) =>
-        @debug "servers()"
-
-        if typeof params is 'function'
-            fn = params
-            params = {}
-
-        query = {}
-
-        unless params.hypervisor_hostname
-            throw "`hypervisor_hostname` is mandatory"
-
-        if params.tenant_id
-            query.context = params.tenant_id
-        else
-            query.all_tenants = 1
-            query.context = "%context%"
-
-        @find params, (matches) =>
-            if matches.length < 1
-                throw "No results for #{params.hypervisor_hostname}"
-            else if matches.length > 1
-                throw "#{params.hypervisor_hostname} returned multiple results"
-            else
-                @get "%context%/os-hypervisors/#{matches[0].hypervisor_hostname}/servers", query, (data) => fn data.hypervisors[0].servers if fn
-
 module.exports = (client) -> new Hypervisors client
