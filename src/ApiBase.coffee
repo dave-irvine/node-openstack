@@ -50,6 +50,16 @@ class module.exports.ApiBase
                     fn JSON.parse(body), response.headers if fn
                 else throw "error from API: " + err
 
+        @base_put = (path, data={}, fn=null) =>
+            debug "base_put() : #{path}"
+            opts = @prepareOpts path, data, "PUT"
+            debug opts
+            request opts, (err, response, body) =>
+                debug "put request return"
+                unless err
+                    fn JSON.parse(body), response.headers if fn
+                else throw "error from API: " + err
+
         @base_get = (path, query={}, fn=null) =>
             debug "base_get() : #{path} #{querystring.stringify(query)}"
             if typeof query is 'function'
@@ -76,6 +86,7 @@ class module.exports.ApiBase
             headers: @options.request_headers ? @options.default_headers
         switch method
             when "POST" then finalopts.body = JSON.stringify(opts)
+            when "PUT" then finalopts.body = JSON.stringify(opts)
             when "GET" then finalopts.uri = urljoin(path, "?#{querystring.stringify(opts)}")
 
         finalopts.uri = finalopts.uri.replace(/\?$/,'')
@@ -86,3 +97,6 @@ class module.exports.ApiBase
 
     post: (path, data={}, fn=null) =>
         @base_post path, data, fn
+
+    put: (path, data={}, fn=null) =>
+        @base_put path, data, fn

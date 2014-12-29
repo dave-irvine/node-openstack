@@ -15,6 +15,7 @@ class module.exports.OpenStack extends ApiBase
         # Compute
         @hypervisors        = require('./Models/Compute/Hypervisors')    @client
         @servers            = require('./Models/Compute/Servers')        @client
+        @os_services           = require('./Models/Compute/Services')       @client
         # Identity
         @credentials        = require('./Models/Identity/Credentials')   @client
         @domains            = require('./Models/Identity/Domains')       @client
