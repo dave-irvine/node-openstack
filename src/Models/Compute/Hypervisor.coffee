@@ -3,8 +3,11 @@ _ = require 'underscore'
 minimatch = require 'minimatch'
 
 class Hypervisor extends BaseModel
+    Server = null
+
     constructor: (client, hypervisor) ->
         super client
+        Server = require('./Server') @client
         @id = hypervisor.id
         @hostname = hypervisor.hypervisor_hostname
 
@@ -26,13 +29,13 @@ class Hypervisor extends BaseModel
             query.all_tenants = 1
             query.context = "%context%"
 
-        @find params, (matches) =>
-            if matches.length < 1
-                throw "No results for #{params.hypervisor_hostname}"
-            else if matches.length > 1
-                throw "#{params.hypervisor_hostname} returned multiple results"
-            else
-                @get "%context%/os-hypervisors/#{matches[0].hypervisor_hostname}/servers", query, (data) => fn data.hypervisors[0].servers if fn
+        @get "%context%/os-hypervisors/#{@hostname}/servers", query, (data) =>
+            servers = []
+            _.each data.hypervisors[0].servers ? [], (server) =>
+                _server = Server(server)
+                servers.push _server
+            
+            fn servers if fn
 
 module.exports = (client) ->
     (hypervisor) ->
