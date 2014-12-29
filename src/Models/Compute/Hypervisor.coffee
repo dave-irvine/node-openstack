@@ -10,6 +10,7 @@ class Hypervisor extends BaseModel
         Server = require('./Server') @client
         @id = hypervisor.id
         @hostname = hypervisor.hypervisor_hostname
+        @tenant_id = client.auth_token.context
 
     init: =>
         @type = "compute"
@@ -23,13 +24,7 @@ class Hypervisor extends BaseModel
 
         query = {}
 
-        if params.tenant_id
-            query.context = params.tenant_id
-        else
-            query.all_tenants = 1
-            query.context = "%context%"
-
-        @get "%context%/os-hypervisors/#{@hostname}/servers", query, (data) =>
+        @get "#{@tenant_id}/os-hypervisors/#{@hostname}/servers", query, (data) =>
             servers = []
             _.each data.hypervisors[0].servers ? [], (server) =>
                 _server = Server(server)
