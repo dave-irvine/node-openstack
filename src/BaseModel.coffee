@@ -2,6 +2,7 @@ debug = require('debug') 'OpenStack:BaseModel'
 urljoin = require 'url-join'
 
 class module.exports
+
     constructor: (@client) ->
         do @_init
 
@@ -11,7 +12,7 @@ class module.exports
     _init: =>
         @debug =   require('debug') "OpenStack:Models:#{@constructor.name}"
 
-        @get =     (path, query, fn) ->
+        @get = (path, query, fn) =>
             debug("get()")
             switch @type
                 when "compute" then path = urljoin(@client.options.endpoints.compute, path)
