@@ -88,6 +88,10 @@ class Servers extends BaseModel
         unless params.id
             throw "`id` is mandatory"
 
-        @get "%context%/servers/#{params.id}", query, (data) => fn data if fn
+        @get "%context%/servers/#{params.id}", query, (data) =>
+            if data.server
+                fn Server(data.server) if fn
+            else
+                fn data if fn
 
 module.exports = (client) -> new Servers client
