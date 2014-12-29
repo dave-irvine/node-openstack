@@ -1,7 +1,7 @@
 BaseModel = require '../../BaseModel'
 _ = require 'underscore'
 minimatch = require 'minimatch'
-debug = require('debug') "OpenStack:Models:Service"
+debug = require('debug') "OpenStack:Models:OS-Service"
 
 class Service extends BaseModel
     constructor: (client, service) ->
@@ -12,7 +12,7 @@ class Service extends BaseModel
         @zone = service.zone
         @disabled_reason = service.disabled_reason
         @host = service.host
-        @tenant_id = service.tenant_id
+        @tenant_id = client.auth_token.context
 
     init: =>
         @type = "compute"

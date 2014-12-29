@@ -35,7 +35,6 @@ class Services extends BaseModel
         @get "%context%/os-services#{detail}", query, (data) =>
             services = []
             _.each data.services, (service) =>
-                service.tenant_id = @client.auth_token.context
                 _service = Service(service)
                 services.push _service
 
