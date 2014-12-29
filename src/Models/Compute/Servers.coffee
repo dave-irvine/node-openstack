@@ -3,6 +3,12 @@ _ = require 'underscore'
 minimatch = require 'minimatch'
 
 class Servers extends BaseModel
+    Server = null
+
+    constructor: (@client) ->
+        super client
+        Server = require('./Server') @client
+
     init: =>
         @type = "compute"
 
@@ -64,6 +70,17 @@ class Servers extends BaseModel
             fn = params
             params = {}
 
-        @get "servers/#{params.endpoint_id}", (data) => fn data if fn
+        query = {}
+
+        if params.tenant_id
+            query.context = params.tenant_id
+        else
+            query.all_tenants = 1
+            query.context = "%context%"
+
+        unless params.id
+            throw "`id` is mandatory"
+
+        @get "%context%/servers/#{params.id}", query, (data) => fn data if fn
 
 module.exports = (client) -> new Servers client
