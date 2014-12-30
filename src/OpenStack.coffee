@@ -123,3 +123,19 @@ class module.exports.OpenStack extends ApiBase
                 @switchContext query.context, _post
             else
                 do _post
+
+    put: (path, query={}, fn=null) =>
+        debug "put()"
+        @checkAuth =>
+            _put = =>
+                @options.request_headers = _.extend { "X-Auth-Token": @auth_token.id }, @options.default_headers
+                path = @fixPath path
+                path = @replaceTokens path, query
+                delete query.context
+                super path, query, fn
+
+            if query.context && query.context != "%context%" && query.context != @auth_token.context
+                debug "switch context to #{query.context}"
+                @switchContext query.context, _put
+            else
+                do _put
