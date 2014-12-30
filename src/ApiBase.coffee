@@ -76,7 +76,7 @@ class module.exports.ApiBase
 
     fixPath: (path) =>
         debug "fixPath()"
-        path.replace(/\/$/, '') + '/'
+        path.replace(/\/$/, '')
 
     prepareOpts: (path, opts, method) =>
         debug "prepareOpts()"
