@@ -46,6 +46,9 @@ class module.exports.ApiBase
             debug opts
             request opts, (err, response, body) =>
                 debug "post request return"
+                if body == ""
+                    body = "{}"
+
                 unless err
                     fn JSON.parse(body), response.headers if fn
                 else throw "error from API: " + err
@@ -56,6 +59,8 @@ class module.exports.ApiBase
             debug opts
             request opts, (err, response, body) =>
                 debug "put request return"
+                if body == ""
+                    body = "{}"
                 unless err
                     fn JSON.parse(body), response.headers if fn
                 else throw "error from API: " + err
@@ -70,6 +75,8 @@ class module.exports.ApiBase
             debug opts
             request opts, (err, response, body) =>
                 debug "get request return"
+                if body == ""
+                    body = "{}"
                 unless err
                     fn JSON.parse(body), response.headers if fn
                 else throw "error from API: " + err
