@@ -36,6 +36,16 @@ class Server extends BaseModel
             else
                 fn @ if fn
 
+    confirmResize: (fn=null) =>
+        params =
+            confirmResize: null
+
+        @post "#{@tenant_id}/servers/#{@id}/action", params, (data) =>
+            fn @ if fn
+
+    confirmMigrate: (fn=null) =>
+        @confirmResize fn
+
     migrate: (params={}, fn=null) =>
         debug "migrate()"
         if typeof params is 'function'
@@ -75,7 +85,22 @@ class Server extends BaseModel
                             issue_migration =>
                                 #Enable all the compute services
                                 enable_compute_services =>
-                                    fn data if fn
+                                    monitor_migration_status =>
+                                        fn @ if fn
+
+        monitor_migration_status = (fn) =>
+            @debug "Checking migration status"
+            @populate =>
+                @debug "Server status is: #{@status}"
+                if @status == 'RESIZE'
+                    monitor = () =>
+                        monitor_migration_status fn
+                    setTimeout monitor, 1000
+                else if @status == 'VERIFY_RESIZE'
+                    @debug "Migration complete. Requires verify."
+                    do fn
+                else
+                    throw "Server in unexpected state: #{@state}"
 
         issue_migration = (fn) =>
             @debug "Begin migration action"
