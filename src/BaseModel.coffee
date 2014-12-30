@@ -20,7 +20,12 @@ class module.exports
                 when "identity" then path = urljoin(@client.options.endpoints.identity, path)
             @client.get path, query, fn
 
-        @post =    @client.post
+        @post = (path, data, fn) =>
+            debug("post()")
+            switch @type
+                when "compute" then path = urljoin(@client.options.endpoints.compute, path)
+                when "identity" then path = urljoin(@client.options.endpoints.identity, path)
+            @client.post path, data, fn
 
         @put = (path, data, fn) =>
             debug "put()"
