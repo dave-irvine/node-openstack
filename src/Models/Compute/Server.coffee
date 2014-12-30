@@ -19,7 +19,10 @@ class Server extends BaseModel
             fn = full
             full = false
 
-        @client.servers.show { id: @id }, (data) =>
+        query =
+            context: @tenant_id
+
+        @get "#{@tenant_id}/servers/#{@id}", query, (data) =>
             @debug data.server
             @status = data.server.status
             @addresses = data.server.addresses
