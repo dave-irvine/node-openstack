@@ -1,6 +1,6 @@
 {
-  "name": "node-openstack",
-  "version": "0.0.1",
+  "name": "openstack",
+  "version": "0.1.0",
   "description": "Node.js bindings for OpenStack API",
   "repository": "https://github.com/dave-irvine/node-openstack",
   "main": "lib/index.js",
