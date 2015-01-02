@@ -1,5 +1,6 @@
 BaseModel = require '../../BaseModel'
 _ = require 'underscore'
+minimatch = require 'minimatch'
 
 class Projects extends BaseModel
     Project = null
@@ -24,6 +25,26 @@ class Projects extends BaseModel
                 projects.push _project
 
             fn projects if fn
+
+    find: (params={}, fn=null) =>
+        @debug "find()"
+        if typeof params is 'function'
+            fn = params
+            params = {}
+
+        unless params.name
+            throw "`name` is mandatory"
+
+        @debug params
+        @all params, (projects) =>
+            matches = [];
+
+            _.each projects, (project) =>
+                @debug project
+                if minimatch(project.name, params.name)
+                    matches.push project
+
+            fn matches if fn
 
     show: (params={}, fn=null) =>
         @debug "show()"
