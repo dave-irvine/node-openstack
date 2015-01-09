@@ -78,6 +78,25 @@ class module.exports.OpenStack extends ApiBase
             debug @auth_token
             do fn if fn
 
+    refreshToken: (fn) =>
+        debug "refreshToken()"
+        authOpts =
+            auth:
+                identity:
+                    methods: ["token"]
+                    token:
+                        id: @auth_token.id
+
+        @post urljoin(@options.endpoints.identity, "/auth/tokens"), authOpts, (body, headers) =>
+            debug "refreshToken complete"
+            @auth_token =
+                id: headers['x-subject-token']
+                expires: body.token.expires_at
+                context: @auth_token.context
+
+            debug @auth_token
+            do fn if fn
+
     checkAuth: (fn) =>
         debug "checkAuth()"
         unless @auth_token
