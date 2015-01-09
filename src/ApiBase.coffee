@@ -25,7 +25,8 @@ class module.exports.ApiBase
             throw "`username` is mandatory"
 
         unless @options.password
-            throw "`password` is mandatory"
+            unless @options.auth_token
+                throw "`password` is mandatory"
 
         @options.default_headers = {
             "Content-Type": "application/json",
