@@ -99,7 +99,7 @@ class Server extends BaseModel
                     @debug "Migration complete. Requires verify."
                     do fn
                 else
-                    throw "Server in unexpected state: #{@state}"
+                    throw "Server #{@name }in unexpected state: #{@status}"
 
         issue_migration = (fn) =>
             @debug "Begin migration action"
