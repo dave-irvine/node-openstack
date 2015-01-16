@@ -105,11 +105,15 @@ class Server extends BaseModel
             @debug "Begin migration action"
             params.migrate = null
             delete params.migrate_to
-            #Begin the migration
-            @post "#{@tenant_id}/servers/#{@id}/action", params, (data) =>
-                @debug "Migration action started"
-                @debug data
-                do fn
+
+            @debug "Context switch"
+            @client.switchContext @tenant_id, =>
+                @debug "Context switch complete"
+                #Begin the migration
+                @post "#{@tenant_id}/servers/#{@id}/action", params, (data) =>
+                    @debug "Migration action started"
+                    @debug data
+                    do fn
 
         find_compute_services = (fn) =>
             @client.os_services.all (services) =>
