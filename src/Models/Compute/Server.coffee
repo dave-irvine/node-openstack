@@ -62,7 +62,7 @@ class Server extends BaseModel
         # we need the full list of Hypervisors anyway, so we might as well fetch all
         # and then filter ourselves.
         @client.hypervisors.all (hypervisors) =>
-            unless hypervisors.length > 1
+            unless hypervisors.length > 0
                 throw "Couldn't find hypervisor: #{params.migrate_to}"
 
             _.each hypervisors, (hypervisor) =>
